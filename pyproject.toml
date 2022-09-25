@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "py-rebar"
+description = "Application framework for console-based python applications."
+authors = [
+    { name = "Joe Reed", email="greyskyy@gmail.com"}
+]
+requires-python = ">=3.9"
+dynamic = [
+    "version"
+]
+license = { text = "MIT" }
+readme = "readme.md"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: MIT",
+    "Operating System :: OS Independent",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]  # list of folders that contain the packages (["."] by default)
+include = ["*"]  # package names should match these glob patterns (["*"] by default)
+exclude = ["*.tests*"]
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "-ra --junitxml=.build/test_output.xml --cov=src --cov-config=.coveragerc --cov-report term --cov-report html --cov-report xml"
+pythonpath = [
+  "src/"
+]
