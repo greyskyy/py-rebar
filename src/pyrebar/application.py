@@ -63,11 +63,10 @@ def main() -> int:
 
         # post-init
         for e in plugins.post_init:
-            e.load()(parser=parser)
+            e.load()(args=args)
 
         # execute the selected plugin
         if args.func:
-            print(f"name={args.func.__name__}")
             return args.func(args=args)
         else:
             raise RuntimeError("No subcommand specified, use --help for more info.")
