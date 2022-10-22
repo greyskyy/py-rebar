@@ -1,6 +1,6 @@
 """Application framework."""
 import argparse
-
+import logging
 import pyrebar.utils.logging
 from .plugins import Plugins, ProcessedPlugins, PluginModule
 
@@ -15,7 +15,7 @@ def _add_app(parser: argparse.ArgumentParser, plugin: PluginModule):
         plugin.conf(parser)
 
 
-def main() -> int:
+def main(argv=None) -> int:
     """The main application.
 
     Returns:
@@ -31,7 +31,7 @@ def main() -> int:
         # pre-init
         for e in plugins.pre_init:
             e.load()(parser=parser)
-        
+
         # load plugins
         if not plugins.apps:
             raise ModuleNotFoundError(
@@ -56,7 +56,7 @@ def main() -> int:
                     _add_app(p, plugin)
 
         # process arguments
-        args = parser.parse_args()
+        args = parser.parse_args(args=argv)
 
         # configure the logger
         pyrebar.utils.logging.config_logging(args)
@@ -70,10 +70,15 @@ def main() -> int:
             return args.func(args=args)
         else:
             raise RuntimeError("No subcommand specified, use --help for more info.")
-    
+
     finally:
         for e in plugins.shutdown:
             try:
                 e.load()()
-            except:
-                pass
+            except:  # noqa: E722 - log shutdown errors
+                logging.getLogger(__name__).error(
+                    "Caught error executing shutdown hook %s",
+                    e.name,
+                    exc_info=1,
+                    stack_info=1,
+                )

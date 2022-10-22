@@ -4,10 +4,8 @@ Another python console application skeleton.
 
 ## Installing
 
-Install directly from github. 
-
 ```bash
-pip install git+https://github.com/greyskyy/py-rebar.git
+pip install py-rebar
 ```
 
 ## Framework workflow

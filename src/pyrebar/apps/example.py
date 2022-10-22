@@ -33,3 +33,8 @@ def execute(args=None) -> int:
 
     logger.info("completed.")
     return 0
+
+
+def shutdown():
+    """Shutdown hook."""
+    print("shutdown hook")

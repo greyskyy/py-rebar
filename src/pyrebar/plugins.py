@@ -94,7 +94,7 @@ class Plugins:
 
     APP_GROUP = "pyrebar.app"
     """Group used for applications."""
-    
+
     SHUTDOWN_GROUP = "pyrebar.shutdown"
     """Group used for the post-application shutdown."""
 
@@ -127,7 +127,7 @@ class Plugins:
         points = entry_points()
 
         for e in cls.__entrypoints:
-            if e.name in points:
+            if e.name in points.names:
                 points[e.name].append(e)
             else:
                 points[e.name] = [e]
@@ -148,4 +148,6 @@ class Plugins:
         apps = tuple(e for e in entry_points.select(group=Plugins.APP_GROUP))
         shutdown = tuple(e for e in entry_points.select(group=Plugins.SHUTDOWN_GROUP))
 
-        return ProcessedPlugins(pre_init=pre_init, post_init=post_init, apps=apps, shutdown=shutdown)
+        return ProcessedPlugins(
+            pre_init=pre_init, post_init=post_init, apps=apps, shutdown=shutdown
+        )
