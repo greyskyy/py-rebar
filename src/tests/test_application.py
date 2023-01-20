@@ -5,7 +5,7 @@ import unittest.mock
 import pyrebar.application
 
 from importlib.metadata import EntryPoint
-from pyrebar.plugins import PluginModule, ProcessedPlugins, Plugins
+from pyrebar.plugins import PluginModule, ProcessedPlugins, Plugins, PluginGroups
 
 
 @pytest.fixture
@@ -28,33 +28,35 @@ def full_plugin() -> PluginModule:
 @pytest.fixture
 def processed_plugins() -> ProcessedPlugins:
     """Bootstrap the plugins."""
+    groups = PluginGroups.with_prefix()
+
     return ProcessedPlugins(
         pre_init=(
             EntryPoint(
                 name="example-init",
                 value="pyrebar.apps.example:initialize",
-                group=Plugins.PREINIT_GROUP,
+                group=groups.pre_init,
             )
         ),
         post_init=(
             EntryPoint(
                 name="example-init",
                 value="pyrebar.apps.example:initialize",
-                group=Plugins.POSTINIT_GROUP,
+                group=groups.post_init,
             )
         ),
         apps=(
             EntryPoint(
                 name="example-init",
                 value="pyrebar.apps.example",
-                group=Plugins.APP_GROUP,
+                group=groups.app,
             )
         ),
         shutdown=(
             EntryPoint(
                 name="example-init",
                 value="pyrebar.apps.example:shutdown",
-                group=Plugins.SHUTDOWN_GROUP,
+                group=groups.shutdown,
             )
         ),
     )
@@ -104,30 +106,30 @@ def test_add_app2():
 @unittest.mock.patch("sys.exit")
 def test_main(mock_exit):
     """Run an example application."""
+    groups = PluginGroups.with_prefix()
+
     Plugins.add_entrypoint(
         EntryPoint(
             name="example-init",
             value="pyrebar.apps.example:initialize",
-            group=Plugins.PREINIT_GROUP,
+            group=groups.pre_init,
         )
     )
     Plugins.add_entrypoint(
         EntryPoint(
             name="example-init",
             value="pyrebar.apps.example:initialize",
-            group=Plugins.POSTINIT_GROUP,
+            group=groups.post_init,
         )
     )
     Plugins.add_entrypoint(
-        EntryPoint(
-            name="example-init", value="pyrebar.apps.example", group=Plugins.APP_GROUP
-        )
+        EntryPoint(name="example-init", value="pyrebar.apps.example", group=groups.app)
     )
     Plugins.add_entrypoint(
         EntryPoint(
             name="example-init",
             value="pyrebar.apps.example:shutdown",
-            group=Plugins.SHUTDOWN_GROUP,
+            group=groups.shutdown,
         )
     )
     pyrebar.application.main(argv=["--info"])

@@ -2,6 +2,7 @@
 import argparse
 import logging
 import pyrebar.utils.logging
+
 from .plugins import Plugins, ProcessedPlugins, PluginModule
 
 
@@ -15,13 +16,13 @@ def _add_app(parser: argparse.ArgumentParser, plugin: PluginModule):
         plugin.conf(parser)
 
 
-def main(argv=None) -> int:
+def main(argv=None, plugin_prefix: str = None) -> int:
     """The main application.
 
     Returns:
         int: The return value.
     """
-    plugins = Plugins.extract_plugins()
+    plugins = Plugins.extract_plugins(prefix=plugin_prefix)
     parser = argparse.ArgumentParser()
 
     # add the pyrebar logging parameters
